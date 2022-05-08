@@ -19,3 +19,14 @@ export function* sortAlgorithm(nodes, { check, swap, afterIteration }) {
 		afterIteration();
 	} while (!done);
 }
+
+export const bigO_txt = {
+	min: 'n',
+	max: 'n<sup>2</sup>',
+	average: 'n<sup>2</sup>'
+};
+export const bigO_val = {
+	min: n => n,
+	max: n => n ** 2,
+	average: n => n ** 2
+}
