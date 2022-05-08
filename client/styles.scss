@@ -1,3 +1,10 @@
+$clr1: #02080d;
+$clr2: #060c12;
+$clr3: #1a1e21;
+$clr4: #334759;
+$clr6: #95aec3;
+$clr7: #9c95c3;
+
 * {
   margin: 0;
   padding: 0;
@@ -6,52 +13,118 @@
 
 html {
   font-size: 1.8vh;
-  background: #444;
-  color: #fff;
+  background: $clr2;
+  color: $clr6;
+  font-family: sans-serif;
+  text-transform: capitalize;
 }
-@mixin setColor($clr, $duration:3ms) {
-  $name: fade_#{str-slice(inspect($clr), 2)};
-  @keyframes #{$name} {
-    from {
-      background-color: $clr;
+
+header {
+  height: 2rem;
+  width: 100vw;
+  display: flex;
+  background: $clr1;
+
+  > a {
+    height: 100%;
+    flex: 1;
+    color: $clr6;
+    text-decoration: none;
+    display: inline-block;
+    padding: .5em .5ch;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+      background-color: $clr3;
     }
   }
-  animation: $name $duration;
-};
+}
 
 h1 {
   text-transform: capitalize;
 }
 
 #wrapper {
-  width: 40rem;
-  height: 25rem;
-  background: #000;
+  width: min(100vw, 120vh);
+  display: grid;
+  height: 70vh;
+  grid-template-columns: 4fr 1fr;
+  grid-template-rows: 10fr 1fr;
+  grid-gap: 1rem;
+}
+@mixin hue($l:30%,$s:60%,$h:var(--value)) {
+  background-color: hsl(calc((100 - $h) * 2.7), $s, $l);
+}
+
+#canvas {
+  width: 100%;
+  height: 100%;
+  background: $clr1;
+  grid-area: 1 / 1 / 2 / 2;
 
   > div {
-    background: hsl(calc((100 - var(--value)) * 2.7), 100%, 50%);
+    @include hue;
     width: 1%;
     height: calc(1% * var(--value));
     display: inline-block;
 
     &:hover {
-      background: hsl(calc((100 - var(--value)) * 2.7), 100%, 75%);
+      @include hue(35%);
     }
+    @mixin setColor($clr, $duration:3ms) {
+      $name: fade_#{str-slice(inspect($clr), 2)};
+      @keyframes #{$name} {
+        from {
+          background-color: $clr;
+        }
+      }
+      animation: $name $duration;
+    };
 
     &.checked {
-      @include setColor(#afa);
+      @include setColor($clr6);
     }
 
     &.done {
-      @include setColor(#faa,1s);
+      @include setColor($clr7,1s);
     }
   }
 }
 
-#start_sound {
-  display: inline-block;
-  background: #111;
-  margin: 1em 1ch;
-  padding: .5em .5ch;
-  cursor: pointer;
+#data {
+  grid-area: 1 / 2 / 2 / 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  > div {
+    background: $clr1;
+    display: flex;
+    height: 2rem;
+    padding: .5rem 2ch;
+    justify-content: space-between;
+
+    > span {
+      &#label {}
+    }
+  }
+}
+
+#buttons {
+  grid-area: 2 / 1 / 3 / 3;
+  display: flex;
+  gap: 1rem;
+
+  > div {
+    background: $clr1;
+    cursor: pointer;
+    text-align: center;
+    height: 2rem;
+    padding: .5rem 2ch;
+
+    &:hover {
+      background-color: $clr3;
+    }
+  }
 }

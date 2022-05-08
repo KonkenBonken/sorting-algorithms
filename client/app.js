@@ -1,7 +1,8 @@
 console.log('App.js running');
-const newDiv = (el = 'div', ...classes) => {
+const newDiv = (el = 'div', attr = {}) => {
 		let div = document.createElement(el);
-		if (classes) classes.forEach(cl => div.classList.add(cl));
+		for (let [key, value] of Object.entries(attr))
+			div[key] = value
 		return div;
 	},
 	q = s => document.querySelector(s),
@@ -12,10 +13,13 @@ const hash = window.location.search.substr(1) || 'bubble';
 q('h1').innerHTML = hash + ' sort';
 
 window.stop = false;
-const wrapper = q('section#wrapper'),
-	nodes = wrapper.children;
+const canvas = q('#canvas'),
+	speedDial = q('#speed>input'),
+	pauseButton = q('#buttons>#pause'),
+	dataSection = q('#data'),
+	nodes = canvas.children;
 
-wrapper.append(...Array(100).fill().map((_, i) => {
+canvas.append(...Array(100).fill().map((_, i) => {
 	i++;
 	const div = newDiv();
 
@@ -26,11 +30,22 @@ wrapper.append(...Array(100).fill().map((_, i) => {
 	return div;
 }).sort(() => Math.random() - .5));
 
-let checks = 0,
-	soundState = false,
+const hovered = newDiv(),
+	hoveredData = newDiv('span', { id: 'hovered' });
+hovered.append(newDiv('span', { id: 'label', innerHTML: 'Value' }), hoveredData);
+
+for (const node of nodes) {
+	node.addEventListener('mouseover', () => {
+		dataSection.append(hovered);
+		hoveredData.innerHTML = +node;
+	});
+	canvas.addEventListener('mouseout', () => hovered.remove());
+}
+
+let soundState = false,
 	playSound = () => false,
 	setVolume = () => false;
-q('#start_sound').addEventListener('click', e => {
+q('#buttons>#sound').addEventListener('click', e => {
 	soundState = !soundState;
 	if (!soundState) {
 		playSound = () => false;
@@ -57,27 +72,64 @@ q('#start_sound').addEventListener('click', e => {
 	}
 });
 
-const assets = {
-	wrapper,
-	check: (...checkedElements) => {
-		checkedElements.forEach(el => el.classList.add('checked'));
-		checks++;
-		playSound(checkedElements[0]);
+let onUnpause = Promise.resolve(),
+	resolvePause,
+	paused = false;
+pauseButton.addEventListener('click', () => {
+	paused = !paused;
+	if (paused)
+		onUnpause = new Promise(res => resolvePause = res);
+	else resolvePause();
+})
+
+const checksEl = q('#data #checks');
+
+const
+	data = {
+		checks: 0,
+		check() {
+			this.checks++;
+			checksEl.innerHTML = this.checks;
+		}
 	},
-	afterIteration: () => [...nodes].forEach(el => el.classList.remove('checked')),
-};
+	assets = {
+		canvas,
+		check: (...checkedElements) => {
+			checkedElements.forEach(el => el.classList.add('checked'));
+			data.check();
+			playSound(checkedElements[0]);
+		},
+		afterIteration: () => [...nodes].forEach(el => el.classList.remove('checked')),
+	};
 
 const { sortAlgorithm } = await import(`../algorithms/${hash}.mjs`);
 const it = window.it = sortAlgorithm(nodes, assets);
 console.log(it);
 
+const speedEl = q('#data #speed');
+speedDial.addEventListener('input', () => speedEl.innerHTML = speedDial.value);
+
+
+const delay = () => {
+	if (speedDial.value < 10)
+		return sleep(100 * (10 - speedDial.value));
+	if (!(index % (speedDial.value - 9)))
+		return sleep(1);
+	return Promise.resolve();
+};
+let index = 0;
+
 do {
 	var { done } = it.next();
-	await sleep(1);
+
+	index++;
+	await delay()
+
+	await onUnpause;
 } while (!done && !window.stop);
 
 for (var node of nodes) {
 	node.classList.add('done');
 	playSound(node);
-	await sleep(1);
+	await delay();
 }
