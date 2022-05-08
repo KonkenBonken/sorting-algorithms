@@ -6,4 +6,49 @@
 
 html {
   font-size: 1.8vh;
+  background: #444;
+  color: #fff;
+}
+
+h1 {
+  text-transform: capitalize;
+}
+
+#wrapper {
+  width: 40rem;
+  height: 25rem;
+  background: #000;
+}
+#wrapper > div {
+  background: hsl(calc((100 - var(--value)) * 2.7), 100%, 50%);
+  width: 1%;
+  height: calc(1% * var(--value));
+  display: inline-block;
+}
+#wrapper > div:hover {
+  background: hsl(calc((100 - var(--value)) * 2.7), 100%, 75%);
+}
+#wrapper > div.checked {
+  animation: fade_afa 3ms;
+}
+@keyframes fade_afa {
+  from {
+    background-color: #afa;
+  }
+}
+#wrapper > div.done {
+  animation: fade_faa 1s;
+}
+@keyframes fade_faa {
+  from {
+    background-color: #faa;
+  }
+}
+
+#start_sound {
+  display: inline-block;
+  background: #111;
+  margin: 1em 1ch;
+  padding: 0.5em 0.5ch;
+  cursor: pointer;
 }

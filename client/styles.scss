@@ -1,0 +1,57 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 1.8vh;
+  background: #444;
+  color: #fff;
+}
+@mixin setColor($clr, $duration:3ms) {
+  $name: fade_#{str-slice(inspect($clr), 2)};
+  @keyframes #{$name} {
+    from {
+      background-color: $clr;
+    }
+  }
+  animation: $name $duration;
+};
+
+h1 {
+  text-transform: capitalize;
+}
+
+#wrapper {
+  width: 40rem;
+  height: 25rem;
+  background: #000;
+
+  > div {
+    background: hsl(calc((100 - var(--value)) * 2.7), 100%, 50%);
+    width: 1%;
+    height: calc(1% * var(--value));
+    display: inline-block;
+
+    &:hover {
+      background: hsl(calc((100 - var(--value)) * 2.7), 100%, 75%);
+    }
+
+    &.checked {
+      @include setColor(#afa);
+    }
+
+    &.done {
+      @include setColor(#faa,1s);
+    }
+  }
+}
+
+#start_sound {
+  display: inline-block;
+  background: #111;
+  margin: 1em 1ch;
+  padding: .5em .5ch;
+  cursor: pointer;
+}
