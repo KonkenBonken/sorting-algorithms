@@ -82,23 +82,22 @@ pauseButton.addEventListener('click', () => {
 	else resolvePause();
 })
 
-const checksEl = q('#data #checks');
+const checksEl = q('#data #checks'),
+	swapsEl = q('#data #swaps');
 
 const
 	data = {
 		checks: 0,
-		check() {
-			this.checks++;
-			checksEl.innerHTML = this.checks;
-		}
+		swaps: 0,
 	},
 	assets = {
 		canvas,
-		check: (...checkedElements) => {
+		check(...checkedElements) {
 			checkedElements.forEach(el => el.classList.add('checked'));
-			data.check();
+			checksEl.innerHTML = ++data.checks;
 			playSound(checkedElements[0]);
 		},
+		swap: () => swapsEl.innerHTML = ++data.swaps,
 		afterIteration: () => [...nodes].forEach(el => el.classList.remove('checked')),
 	};
 

@@ -1,4 +1,4 @@
-export function* sortAlgorithm(nodes, { check, afterIteration }) {
+export function* sortAlgorithm(nodes, { check, swap, afterIteration }) {
 	const length = nodes.length;
 	let flip = 0;
 	do {
@@ -12,6 +12,7 @@ export function* sortAlgorithm(nodes, { check, afterIteration }) {
 			if (a > b) {
 				done = false;
 				a.before(b);
+				swap();
 			}
 			yield;
 		}
