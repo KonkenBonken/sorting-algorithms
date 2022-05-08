@@ -45,11 +45,15 @@ for (const node of nodes) {
 let soundState = false,
 	playSound = () => false,
 	setVolume = () => false;
+const volumeEl = newDiv(),
+	volumeData = newDiv('span', { id: 'volume', innerHTML: 4 });
+volumeEl.append(newDiv('span', { id: 'label', innerHTML: 'Volume' }), volumeData);
 q('#buttons>#sound').addEventListener('click', e => {
 	soundState = !soundState;
 	if (!soundState) {
 		playSound = () => false;
 		e.target.innerHTML = 'Start Sound';
+		volumeEl.remove();
 		return;
 	}
 	e.target.innerHTML = 'Stop Sound';
@@ -61,6 +65,11 @@ q('#buttons>#sound').addEventListener('click', e => {
 	setVolume = window.setVolume = v => gain.gain.setValueAtTime(v, context.currentTime);
 	setVolume(.04);
 
+	dataSection.append(volumeEl);
+	q('#volume>input').addEventListener('input', e => {
+		setVolume(e.target.value / 50);
+		volumeData.innerHTML = e.target.value;
+	});
 
 	playSound = window.playSound = value => {
 		const o = context.createOscillator()
