@@ -77,6 +77,7 @@ let onUnpause = Promise.resolve(),
 	paused = false;
 pauseButton.addEventListener('click', () => {
 	paused = !paused;
+	pauseButton.innerHTML = paused ? 'Play' : 'Pause';
 	if (paused)
 		onUnpause = new Promise(res => resolvePause = res);
 	else resolvePause();
