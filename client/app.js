@@ -147,5 +147,5 @@ do {
 for (var node of nodes) {
 	node.classList.add('done');
 	playSound(node);
-	await delay();
+	await sleep(7);
 }
