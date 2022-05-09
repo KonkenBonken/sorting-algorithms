@@ -46,8 +46,18 @@ let soundState = false,
 	playSound = () => false,
 	setVolume = () => false;
 const volumeEl = newDiv(),
-	volumeData = newDiv('span', { id: 'volume', innerHTML: 4 });
+	volumeData = newDiv('span', { id: 'volume', innerHTML: 4 }),
+	volumeInput = q('#volume>input');
 volumeEl.append(newDiv('span', { id: 'label', innerHTML: 'Volume' }), volumeData);
+
+if (+sessionStorage.getItem('volume'))
+	volumeData.innerHTML = volumeInput.value = +sessionStorage.getItem('volume') || 2;
+volumeInput.addEventListener('input', e => {
+	setVolume(e.target.value / 50);
+	sessionStorage.setItem('volume',
+		volumeData.innerHTML = e.target.value);
+});
+
 q('#buttons>#sound').addEventListener('click', e => {
 	soundState = !soundState;
 	if (!soundState) {
@@ -61,15 +71,11 @@ q('#buttons>#sound').addEventListener('click', e => {
 	const context = new AudioContext();
 
 	const gain = context.createGain();
-	// gain.connect(context.destination);
+
 	setVolume = window.setVolume = v => gain.gain.setValueAtTime(v, context.currentTime);
-	setVolume(.04);
+	setVolume(volumeInput.value / 50);
 
 	dataSection.append(volumeEl);
-	q('#volume>input').addEventListener('input', e => {
-		setVolume(e.target.value / 50);
-		volumeData.innerHTML = e.target.value;
-	});
 
 	playSound = window.playSound = value => {
 		const o = context.createOscillator()
@@ -111,13 +117,14 @@ const
 		afterIteration: () => [...nodes].forEach(el => el.classList.remove('checked')),
 	};
 
+const speedEl = q('#data #speed');
+speedDial.addEventListener('input', () => sessionStorage.setItem('speed', speedEl.innerHTML = speedDial.value));
+if (+sessionStorage.getItem('speed'))
+	speedEl.innerHTML = speedDial.value = +sessionStorage.getItem('speed');
+
 const { sortAlgorithm } = await import(`../algorithms/${hash}.mjs`);
 const it = window.it = sortAlgorithm(nodes, assets);
 console.log(it);
-
-const speedEl = q('#data #speed');
-speedDial.addEventListener('input', () => speedEl.innerHTML = speedDial.value);
-
 
 const delay = () => {
 	if (speedDial.value < 10)
