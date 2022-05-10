@@ -61,17 +61,17 @@ h1 {
   background-color: hsl(calc((100 - var(--value)) * 2.7), 60%, 35%);
 }
 #canvas > div.checked {
-  animation: fade_95aec3 3ms;
+  animation: fade_check calc(1s / var(--speed));
 }
-@keyframes fade_95aec3 {
+@keyframes fade_check {
   from {
     background-color: #95aec3;
   }
 }
 #canvas > div.done {
-  animation: fade_9c95c3 1s;
+  animation: fade_done 1s;
 }
-@keyframes fade_9c95c3 {
+@keyframes fade_done {
   from {
     background-color: #9c95c3;
   }

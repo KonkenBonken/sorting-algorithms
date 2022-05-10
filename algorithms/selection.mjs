@@ -1,4 +1,4 @@
-export function* sortAlgorithm(nodes, { canvas, swap, check, afterIteration }) {
+export function* sortAlgorithm(nodes, { canvas, swap, check }) {
 	const length = nodes.length;
 	let iteration = 0;
 	for (var i = 0; i < length - 1; i++) {
@@ -15,7 +15,6 @@ export function* sortAlgorithm(nodes, { canvas, swap, check, afterIteration }) {
 		}
 		swap();
 		canvas.insertBefore(minimum, nodes[iteration++]);
-		afterIteration();
 	}
 }
 

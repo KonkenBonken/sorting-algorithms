@@ -1,4 +1,4 @@
-export function* sortAlgorithm(nodes, { canvas, swap, check, afterIteration }) {
+export function* sortAlgorithm(nodes, { canvas, swap, check }) {
 	function swapElements(i, j) {
 		const node1 = nodes[i],
 			node2 = nodes[j];
@@ -20,7 +20,6 @@ export function* sortAlgorithm(nodes, { canvas, swap, check, afterIteration }) {
 				yield;
 				swapElements(++i, j);
 			}
-		afterIteration();
 
 		yield;
 		swapElements(++i, high)

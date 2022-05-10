@@ -109,18 +109,25 @@ const
 	assets = {
 		canvas,
 		check(...checkedElements) {
-			checkedElements.forEach(el => el.classList.add('checked'));
+			checkedElements.forEach(el => {
+				el.classList.add('checked');
+				if (el.checkedTimer) clearTimeout(el.checkedTimer);
+				el.checkedTimer = setInterval(() => el.classList.remove('checked'), 1000 / speedDial.value);
+			});
 			checksEl.innerHTML = ++data.checks;
 			playSound(checkedElements[0]);
 		},
-		swap: () => swapsEl.innerHTML = ++data.swaps,
-		afterIteration: () => [...nodes].forEach(el => el.classList.remove('checked')),
+		swap: () => swapsEl.innerHTML = ++data.swaps
 	};
 
 const speedEl = q('#data #speed');
-speedDial.addEventListener('input', () => sessionStorage.setItem('speed', speedEl.innerHTML = speedDial.value));
+speedDial.addEventListener('input', () => {
+	sessionStorage.setItem('speed', speedEl.innerHTML = speedDial.value);
+	canvas.style.setProperty('--speed', speedDial.value);
+});
 if (+sessionStorage.getItem('speed'))
 	speedEl.innerHTML = speedDial.value = +sessionStorage.getItem('speed');
+canvas.style.setProperty('--speed', speedDial.value);
 
 const { sortAlgorithm } = await import(`../algorithms/${hash}.mjs`);
 const it = window.it = sortAlgorithm(nodes, assets);

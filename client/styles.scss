@@ -72,22 +72,24 @@ h1 {
     &:hover {
       @include hue(35%);
     }
-    @mixin setColor($clr, $duration:3ms) {
-      $name: fade_#{str-slice(inspect($clr), 2)};
-      @keyframes #{$name} {
-        from {
-          background-color: $clr;
-        }
-      }
-      animation: $name $duration;
-    };
+    @mixin setColor($clr, $duration: 3ms) {};
 
     &.checked {
-      @include setColor($clr6);
+      animation: fade_check calc(1s / var(--speed));
+      @keyframes fade_check {
+        from {
+          background-color: $clr6;
+        }
+      }
     }
 
     &.done {
-      @include setColor($clr7,1s);
+      animation: fade_done 1s;
+      @keyframes fade_done {
+        from {
+          background-color: $clr7;
+        }
+      }
     }
   }
 }
