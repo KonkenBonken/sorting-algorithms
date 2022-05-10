@@ -12,7 +12,6 @@ const newDiv = (el = 'div', attr = {}) => {
 const hash = window.location.search.substr(1) || 'bubble';
 q('h1').innerHTML = hash + ' sort';
 
-window.stop = false;
 const canvas = q('#canvas'),
 	speedDial = q('#speed>input'),
 	pauseButton = q('#buttons>#pause'),
@@ -142,14 +141,14 @@ const delay = () => {
 };
 let index = 0;
 
-do {
-	var { done } = it.next();
+while (true) {
+	if (it.next().done) break;
 
 	index++;
 	await delay()
 
 	await onUnpause;
-} while (!done && !window.stop);
+};
 
 for (var node of nodes) {
 	node.classList.add('done');
