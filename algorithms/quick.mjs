@@ -33,12 +33,8 @@ export function* sortAlgorithm(nodes, { canvas, swap, check, afterIteration }) {
 }
 
 export const bigO_txt = {
-	min: 'nlog n',
-	max: 'nlog n',
 	average: 'nlog n'
 };
 export const bigO_val = {
-	min: n => n * Math.log(n),
-	max: n => n * Math.log(n),
 	average: n => n * Math.log(n)
 }
