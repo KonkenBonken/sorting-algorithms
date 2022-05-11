@@ -1,4 +1,3 @@
-console.log('App.js running');
 const newDiv = (el = 'div', attr = {}) => {
 		let div = document.createElement(el);
 		for (let [key, value] of Object.entries(attr))
@@ -18,16 +17,25 @@ const canvas = q('#canvas'),
 	dataSection = q('#data'),
 	nodes = canvas.children;
 
-canvas.append(...Array(100).fill().map((_, i) => {
-	i++;
+canvas.append(...Array(100).fill().map(() => {
 	const div = newDiv();
 
-	div.value = i;
+	div.setValue = v => {
+		div.value = v;
+		div.style.setProperty('--value', v);
+	};
 	div.valueOf = () => div.value;
-	div.style.setProperty('--value', i);
 
 	return div;
-}).sort(() => Math.random() - .5));
+}));
+
+function Shuffle() {
+	Array(100).fill().map((_, i) => i + 1).sort(() => Math.random() - .5).forEach((v, i) =>
+		nodes[i].setValue(v)
+	);
+}
+
+Shuffle();
 
 const hovered = newDiv(),
 	hoveredData = newDiv('span', { id: 'hovered' });
@@ -87,14 +95,18 @@ q('#buttons>#sound').addEventListener('click', e => {
 });
 
 let onUnpause = Promise.resolve(),
-	resolvePause,
+	resolvePause = () => 0,
 	paused = false;
-pauseButton.addEventListener('click', () => {
-	paused = !paused;
+
+function setPause(force) {
+	paused = !!force;
 	pauseButton.innerHTML = paused ? 'Play' : 'Pause';
 	if (paused)
 		onUnpause = new Promise(res => resolvePause = res);
 	else resolvePause();
+}
+pauseButton.addEventListener('click', () => {
+	if (pauseButton.innerHTML != 'Replay') setPause(!paused)
 })
 
 const checksEl = q('#data #checks'),
@@ -129,10 +141,8 @@ if (+sessionStorage.getItem('speed'))
 canvas.style.setProperty('--speed', speedDial.value);
 
 const { sortAlgorithm } = await import(`../algorithms/${hash}.mjs`);
-const it = window.it = sortAlgorithm(nodes, assets);
-console.log(it);
 
-const delay = () => {
+function delay() {
 	if (speedDial.value < 10)
 		return sleep(100 * (10 - speedDial.value));
 	if (!(index % (speedDial.value - 9)))
@@ -141,17 +151,34 @@ const delay = () => {
 };
 let index = 0;
 
-while (true) {
-	if (it.next().done) break;
+async function Sort() {
+	const it = window.it = sortAlgorithm(nodes, assets);
 
-	index++;
-	await delay()
+	for (var node of nodes)
+		node.classList.remove('done');
 
-	await onUnpause;
-};
+	setPause(false);
+	while (true) {
+		if (it.next().done) break;
 
-for (var node of nodes) {
-	node.classList.add('done');
-	playSound(node);
-	await sleep(7);
+		index++;
+		await delay()
+
+		await onUnpause;
+	};
+
+	for (var node of nodes) {
+		node.classList.add('done');
+		playSound(node);
+		await sleep(7);
+	}
+	setPause(true);
+	pauseButton.innerHTML = 'Replay';
+	pauseButton.addEventListener('click', () => {
+		Shuffle();
+		setTimeout(Sort, 1000 / speedDial.value + 500)
+	}, { once: true });
 }
+
+
+Sort()
