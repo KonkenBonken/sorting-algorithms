@@ -56,6 +56,8 @@ h1 {
   width: 1%;
   height: calc(1% * var(--value));
   display: inline-block;
+  transition: calc(1s / var(--speed)) ease;
+  transition-property: height, background-color;
 }
 #canvas > div:hover {
   background-color: hsl(calc((100 - var(--value)) * 2.7), 60%, 35%);
@@ -97,11 +99,17 @@ h1 {
 }
 #buttons > div {
   background: #02080d;
-  cursor: pointer;
   text-align: center;
   height: 2rem;
   padding: 0.5rem 2ch;
+  cursor: pointer;
 }
-#buttons > div:hover {
+#buttons > :not(.range):hover {
   background-color: #1a1e21;
+}
+#buttons .range {
+  cursor: default;
+}
+#buttons .range > input {
+  cursor: pointer;
 }
